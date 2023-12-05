@@ -3,7 +3,7 @@ const express = require('express')
 const router = express.Router()
 
 //controllers
-const mpesa = require('../backend/controllers/mpesaController');
+const mpesa = require('../controllers/mpesaController');
 
 //route to get the auth token
 router.get('/get-auth-token',mpesa.getOAuthToken);

@@ -2,11 +2,14 @@
 const axios = require('axios').default;
 require('dotenv').config();
 
+
 class MpesaController {
 
-    async getOAuthToken(req,res,next){
+    async getOAuthToken(req,res,next) {
+
         let consumer_key = process.env.consumer_key;
         let consumer_secret = process.env.consumer_secret;
+
 
         let url = process.env.oauth_token_url;
 
@@ -14,12 +17,15 @@ class MpesaController {
         let buffer = new Buffer.from(consumer_key+":"+consumer_secret);
 
         let auth = `Basic ${buffer.toString('base64')}`;
+        
+        // const buffer = Buffer.from(`${consumer_key}:${consumer_secret}`);
+        // const auth = `Basic ${buffer.toString('base64')}`;
 
-        try{
+        try {
 
-            let {data} = await axios.get(url,{
-                "headers":{
-                    "Authorization":auth
+            let { data } = await axios.get(url, {
+                "headers": {
+                    "Authorization": auth
                 }
             });
 
@@ -27,23 +33,23 @@ class MpesaController {
 
             return next();
 
-        }catch(err){
+        } catch (err) {
 
             return res.send({
-                success:false,
-                message:err['response']['statusText']
+                success: false,
+                message: err['response']['statusText']
             });
 
         }
-        
-        
+
+
 
     };
 
-    async lipaNaMpesaOnline(req,res){
+    async lipaNaMpesaOnline(req, res) {
         let token = req.token;
         let auth = `Bearer ${token}`;
-        
+
 
         //getting the timestamp
         let timestamp = require('../middleware/timestamp').timestamp;
@@ -64,49 +70,49 @@ class MpesaController {
 
         try {
 
-            let {data} = await axios.post(url,{
-                "BusinessShortCode":bs_short_code,
-                "Password":password,
-                "Timestamp":timestamp,
-                "TransactionType":transcation_type,
-                "Amount":amount,
-                "PartyA":partyA,
-                "PartyB":partyB,
-                "PhoneNumber":phoneNumber,
-                "CallBackURL":callBackUrl,
-                "AccountReference":accountReference,
-                "TransactionDesc":transaction_desc
-            },{
-                "headers":{
-                    "Authorization":auth
+            let { data } = await axios.post(url, {
+                "BusinessShortCode": bs_short_code,
+                "Password": password,
+                "Timestamp": timestamp,
+                "TransactionType": transcation_type,
+                "Amount": amount,
+                "PartyA": partyA,
+                "PartyB": partyB,
+                "PhoneNumber": phoneNumber,
+                "CallBackURL": callBackUrl,
+                "AccountReference": accountReference,
+                "TransactionDesc": transaction_desc
+            }, {
+                "headers": {
+                    "Authorization": auth
                 }
             }).catch(console.log);
 
             return res.send({
-                success:true,
-                message:data
+                success: true,
+                message: data
             });
 
-        }catch(err){
+        } catch (err) {
 
             return res.send({
-                success:false,
-                message:err['response']['statusText']
+                success: false,
+                message: err['response']['statusText']
             });
 
         };
     };
 
-    lipaNaMpesaOnlineCallback(req,res){
+    lipaNaMpesaOnlineCallback(req, res) {
 
         //Get the transaction description
         let message = req.body.Body.stkCallback['ResultDesc'];
 
         return res.send({
-            success:true,
+            success: true,
             message
         });
-        
+
     };
 
 };
